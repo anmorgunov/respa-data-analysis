@@ -93,6 +93,15 @@ class Graph:
         fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
 
+    def plot_heatmap(self, traces, fname, title):
+        fig = go.Figure()
+        for trace in traces:
+            fig.add_trace(trace)
+        self._update_fig(fig, title)
+        self._update_axes(fig)
+        # fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None)
+        # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
+        self._save_fig(fig, fname)
     
     def create_bar_trace(self, name, xVals, yVals, colors):
         # text = [round(yVal, 1) for yVal in yVals]
