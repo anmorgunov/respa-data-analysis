@@ -87,10 +87,10 @@ class Graph:
         fig = go.Figure()
         for trace in traces:
             fig.add_trace(trace)
-        fig.update_layout(barmode="stack", width=1080)
         self._update_fig(fig, title)
         self._update_axes(fig)
         fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None)
+        fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
 
     
