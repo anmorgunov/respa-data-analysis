@@ -247,7 +247,7 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=f"{diff+1}/5", orientation='h', marker_color=self.RED5[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, f"demographics/difficulty-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были сложными? (1 - легкие, 5 - сложные)")
+        graph.horizontal_bar_plot(traces, f"demographics/difficulty-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были сложными?<br>(1 - легкие, 5 - сложные)")
 
     def problem_volume(self, grade):
         graph = Graph()
@@ -266,7 +266,7 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=f"{diff+1}/5", orientation='h', marker_color=self.RED5[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, f"demographics/volume-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были объемными? (1 - времени было достаточно, 5 - времени не хватало)")
+        graph.horizontal_bar_plot(traces, f"demographics/volume-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были объемными?<br>(1 - времени было достаточно, 5 - времени не хватало)")
 
     def problem_interest(self, grade):
         graph = Graph()
@@ -285,7 +285,7 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=f"{diff+1}/5", orientation='h', marker_color=self.GREEN5[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, f"demographics/interest-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были интересными? (1 - скучные, 5 - интересные)")
+        graph.horizontal_bar_plot(traces, f"demographics/interest-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были интересными?<br>(1 - скучные, 5 - интересные)")
          
 if __name__ == "__main__":
     a = Analyzer()
@@ -293,12 +293,11 @@ if __name__ == "__main__":
     a.language_distribution()
     a.gender_distribution()
     a.first_timers()
-    for grade in (9, 10, 11):
-        a.first_timers_by_grade(grade)
     a.preparation_time()
     a.preparation_style()
     a.did_you_know()
     for grade in (9, 10, 11):
+        a.first_timers_by_grade(grade)
         a.problem_difficulty(grade)
         a.problem_volume(grade)
         a.problem_interest(grade)
