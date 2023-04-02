@@ -41,6 +41,7 @@ class Graph:
         figure.update_xaxes(title=dict(text=xtitle, font = dict(family=self.FONT, size=self.AXIS_TITLE_SIZE, color=self.BLACK,),),
                 showline=True,
                 showgrid=True,
+                gridcolor=self.GREY,
                 mirror=True,
                 dtick=xdtick,
                 showticklabels=True,
@@ -54,6 +55,7 @@ class Graph:
                 ),)
         figure.update_yaxes(title=dict(
                     text=ytitle,
+                    standoff=0,
                     font = dict(
                         family=self.FONT,
                         size=self.AXIS_TITLE_SIZE,
@@ -101,6 +103,23 @@ class Graph:
         self._update_axes(fig)
         # fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None)
         # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
+        self._save_fig(fig, fname)
+
+    def plot_linechart(self, traces, fname, title, xtitle, ytitle, eq):
+        fig = go.Figure()
+        for trace in traces:
+            fig.add_trace(trace)
+        self._update_fig(fig, title)
+        self._update_axes(fig, xdtick=10, ydtick=10, xtitle=xtitle, ytitle=ytitle)
+        fig.update_xaxes(range=[0, 100])
+        fig.update_yaxes(range=[0, 100], showgrid=True)
+        fig.update_layout(width=720, height=720)
+        fig.add_annotation(
+            xref="paper", yref="paper",
+            x=0, y=1,
+            text=eq,
+            showarrow=False,
+        )
         self._save_fig(fig, fname)
     
     def create_bar_trace(self, name, xVals, yVals, colors):
