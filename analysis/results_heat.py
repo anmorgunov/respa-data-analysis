@@ -1,4 +1,4 @@
-from parsers.respa_results import parse_results
+from parsers.parse_respa import parse_results
 import numpy as np
 from objects.graph import Graph
 import plotly.graph_objects as go
@@ -46,9 +46,9 @@ class Analyzer:
 
 
 if __name__ == "__main__":
-    # a = Analyzer(2023)
-    # for grade in (9, 10, 11):
-    #     a.heat_map_for_grade(grade)
+    a = Analyzer(2023)
+    for grade in (9, 10, 11):
+        a.heat_map_for_grade(grade)
     # a.line_two_problems(11, 2, 8)
     # a.line_two_problems(11, 2, 7)
     # a.line_two_problems(11, 3, 8)

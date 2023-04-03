@@ -79,11 +79,11 @@ class Graph:
                     color=self.BLACK,
                 ),)
 
-    def _save_fig(self, figure, fname, html=False, jpg=True, svg=False, pdf=False):
-        if html: figure.write_html(f"export/{fname}.html", include_plotlyjs='cdn')
-        if jpg: figure.write_image(f"export/{fname}.jpg", scale=4.0)
-        if svg: figure.write_image(f"export/{fname}.svg")
-        if pdf: figure.write_image(f"export/{fname}.pdf")
+    def _save_fig(self, figure, fname, html=False, jpg=True, svg=False, pdf=True):
+        if html: figure.write_html(f"export/html/{fname}.html", include_plotlyjs='cdn')
+        if jpg: figure.write_image(f"export/jpg/{fname}.jpg", scale=4.0)
+        if svg: figure.write_image(f"export/svg/{fname}.svg")
+        if pdf: figure.write_image(f"export/pdf/{fname}.pdf")
     
     def horizontal_bar_plot(self, traces, fname, title):
         fig = go.Figure()
@@ -91,7 +91,7 @@ class Graph:
             fig.add_trace(trace)
         self._update_fig(fig, title)
         self._update_axes(fig)
-        fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None)
+        fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None, showgrid=False)
         fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
 
