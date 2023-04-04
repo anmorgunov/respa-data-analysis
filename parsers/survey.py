@@ -32,6 +32,7 @@ def parse_responses(stage):
             grade, num = problem[0].split("№")[1].split('.')[0].split('-')
             if int(grade) == re.gradeParticipate:
                 setattr(re, f"problem{num}", problem[1])
+                re.numprobs = int(num)
         full.append(re)
         bygrade[re.gradeParticipate].append(re)
     return full, bygrade

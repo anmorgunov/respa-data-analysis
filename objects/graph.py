@@ -145,7 +145,7 @@ class Graph:
         for trace in traces:
             fig.add_trace(trace)
         self._update_fig(fig, title)
-        self._update_axes(fig, xdtick=5)
+        self._update_axes(fig, xdtick=10)
         fig.update_xaxes(range=[0, 100])
         fig.update_layout(showlegend=False)
         # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
