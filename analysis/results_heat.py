@@ -40,6 +40,40 @@ class Analyzer:
             traces = [go.Heatmap(z=corrs, text=ffit, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
             graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами ({grade} кл.)")
 
+    def heat_map_for_grade_averaged(self, grade, do_fit=True):
+        graph = Graph()
+        data = self.bygrade[grade]
+        numprobs = [obj.numprobs for obj in data if not obj.only_total]
+        if not numprobs:
+            return
+        NUMPROB = max(numprobs)
+        arrays = np.array([self.results_for_problem(data, i+1) for i in range(NUMPROB)])
+        corrs = np.zeros((NUMPROB, NUMPROB))
+        for i in range(NUMPROB):
+            current = arrays[i, :]
+            others = np.delete(arrays, i, axis=0)
+            avg_others = np.mean(others, axis=0)
+            corrs[i, i] = np.corrcoef(current, avg_others)[0, 1]
+            for j in range(NUMPROB):
+                if i == j: continue
+                others = np.delete(arrays, (i, j), axis=0)
+                avg_others = np.mean(others, axis=0)
+                jcurrent = arrays[j, :]
+                avg_current = np.mean(np.vstack((current, jcurrent)), axis=0)
+                corrs[i, j] = np.corrcoef(avg_current, avg_others)[0, 1]
+
+
+        cortext = [self.ROUND3(cor) for cor in corrs]
+        labels = [f"№{i}" for i in range(1, NUMPROB+1)]
+        traces = [go.Heatmap(z=corrs, text=cortext, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
+        graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-avg", f"Корреляция между средним за задачу (x, y)<br>и средним за все остальные задачи ({grade} кл.)")
+        # if do_fit:
+        #     bestfit = [[np.polyfit(self.results_for_problem(data, i+1), self.results_for_problem(data, j+1), 1)
+        #                 for j in range(NUMPROB)] for i in range(NUMPROB)]
+        #     ffit = [[f"{self.ROUND3(arr[0])}x+{self.ROUND3(arr[1])}" for arr in row] for row in bestfit]
+        #     traces = [go.Heatmap(z=corrs, text=ffit, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
+        #     graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами ({grade} кл.)")
+
     def line_two_problems(self, grade, i, j):
         graph = Graph()
         data = self.bygrade[grade]
@@ -83,11 +117,14 @@ class Analyzer:
 if __name__ == "__main__":
     # First, let's analyze respa results
     OLYMP = "respa/"
-    # for year in (2023, 2022, 2021):
-    #     a = Analyzer(year, parsers.parse_respa.parse_results(year), OLYMP)
-    #     for grade in (9, 10, 11):
-    #         a.heat_map_for_grade(grade)
-    #         a.histograms_for_grade(grade)
+    # a = Analyzer(2023, parsers.parse_respa.parse_results(2023), OLYMP)
+    # a.heat_map_for_grade_averaged(11)
+    for year in (2023, 2022, 2021):
+        a = Analyzer(year, parsers.parse_respa.parse_results(year), OLYMP)
+        for grade in (9, 10, 11):
+            a.heat_map_for_grade_averaged(grade)
+            # a.heat_map_for_grade(grade)
+            # a.histograms_for_grade(grade)
     #         a.box_plots_for_grade(grade)
     
     # a = Analyzer(2023, parsers.parse_respa.parse_results(2023), OLYMP)
@@ -106,9 +143,10 @@ if __name__ == "__main__":
 
     # Now, let's do some oblast stuff
     OLYMP = "oblast/"
-    # bygrade, byoblast = parsers.parse_oblast.parse_results()
-    # a = Analyzer(2023, bygrade, OLYMP)
-    # for grade in (9, 10, 11):
+    bygrade, byoblast = parsers.parse_oblast.parse_results()
+    a = Analyzer(2023, bygrade, OLYMP)
+    for grade in (9, 10, 11):
+        a.heat_map_for_grade_averaged(grade)
     #     a.heat_map_for_grade(grade)
     #     a.histograms_for_grade(grade)
     #     a.box_plots_for_grade(grade)
