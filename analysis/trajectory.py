@@ -29,7 +29,7 @@ class Analyzer:
             for obj in objs:
                 setattr(student, f"{obj.olymp_name}_score", obj.total)
             grToStudents.setdefault(grade, []).append(student)
-        self.gradeToStudent = grToStudents
+            self.gradeToStudent.setdefault(grade, []).append(student)
         return grToStudents
 
     def get_oblast_respa_arrays(self, data, scale=100/70):
@@ -65,14 +65,16 @@ class Analyzer:
         yValLabels = [self.ROUND3(cor) for cor in corrs]
         traces = [go.Bar(y=corrs, x=[f"{grade} класс" for grade in grades], #marker_color=self.BINARY[i],
                                  text=yValLabels, textposition='auto', )] #legendrank=1-i
-        graph.vertical_bar_plot(traces, f"trajectory/bygrade", "Корреляция между баллами областного и заключительного этапа")
+        graph.plot_data(traces, f"trajectory/bygrade", "Корреляция между баллами областного и заключительного этапа",
+                        yaxisparams=dict(range=[0, 1], showgrid=False, dtick=0.2),
+                        xaxisparams=dict(showgrid=False),
+                        layoutparams=dict(barmode="stack", width=1080))
 
     def plot_correlations_by_oblast(self):
         graph = Graph()
         grades = [9, 10, 11]
         oblasts = sorted(self.oblast_byoblast)
         xVals = []
-        print(oblasts)
         corrs = []
         for oblast in oblasts:
             obl_scores, resp_scores = [], []
@@ -110,19 +112,22 @@ class Analyzer:
         corrs.append(np.corrcoef(obl_scores, resp_scores)[0, 1])
         traces = [go.Bar(y=corrs, x=xVals, text=[self.ROUND3(cor) for cor in corrs], 
                          textposition='auto')]
-        graph.vertical_bar_plot(traces, f"trajectory/byoblast", "Корреляция между баллами областного<br>и заключительного этапа по областям")
+        graph.plot_data(traces, f"trajectory/byoblast", "Корреляция между баллами областного<br>и заключительного этапа по областям",
+                        yaxisparams=dict(range=[0, 1], showgrid=False, dtick=0.2),
+                        xaxisparams=dict(showgrid=False),
+                        layoutparams=dict(barmode="stack", width=1080))
         
 
 
 if __name__ == "__main__":
     a = Analyzer()
-    # for grade in (11, 10, 9):
-    #     a.combine_students(grade)
-    #     a.calculate_correlation(grade)
+    for grade in (11, 10, 9):
+        a.combine_students(grade)
+        a.calculate_correlation(grade)
     
     # A few notes: it matches 41/45 students in grade 11
     #                         46/53             grade 10
     #                         44/47             grade 9
     
-    # a.plot_correlations_by_grade()
+    a.plot_correlations_by_grade()
     a.plot_correlations_by_oblast()

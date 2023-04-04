@@ -16,6 +16,8 @@ class Analyzer:
     LIKERT = ['#D35269', '#EF7A85', '#EAEAEA', '#788BFF', '#5465FF']
     stageToInd = {"respa": 0, "oblast": 1, "region": 2}
     xValsStages = ["Заключительный", "Областной", "Районный"]
+    layoutParams = dict(barmode="stack", width=1080, legend_traceorder='reversed')
+    xAxisParams = dict(range=[0, 100], showticklabels=False, ticks=None, showgrid=False)
 
     def __init__(self):
         self.ROUND1 = tools.rounder(1)
@@ -50,7 +52,8 @@ class Analyzer:
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=stage, orientation='h', marker_color=self.GREEN3[i],
                                  text=yValLabels, textposition='auto', legendrank=2-i))
         title = 'В каких школах учатся участники РО?'
-        graph.horizontal_bar_plot(traces, "demographics/schools", title)
+        graph.plot_data(traces, "demographics/schools", title, 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def language_distribution(self):
         graph = Graph()
@@ -90,7 +93,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=xVals, x=yVals, name=lang, orientation='h', marker_color=self.GREEN3[2-i],
                                  text=yValLabels, textposition='auto', legendrank=2-i))
-        graph.horizontal_bar_plot(traces, "demographics/language", "Язык обучения и язык на котором ученики читают задания РО")
+        graph.plot_data(traces, "demographics/language", "Язык обучения и язык на котором ученики читают задания РО", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def gender_distribution(self):
         graph = Graph()
@@ -111,7 +115,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=gender, orientation='h', marker_color=self.BLUEPINK[i],
                                  text=yValLabels, textposition='auto', legendrank=1-i))
-        graph.horizontal_bar_plot(traces, "demographics/gender", "Пол участников РО")
+        graph.plot_data(traces, "demographics/gender", "Пол участников РО", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def first_timers(self):
         graph = Graph()
@@ -132,7 +137,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=kind, orientation='h', marker_color=self.BINARY[i],
                                  text=yValLabels, textposition='auto', legendrank=1-i))
-        graph.horizontal_bar_plot(traces, "demographics/firsttimers", "Какая доля учеников участвует на РО в первый раз?")
+        graph.plot_data(traces, "demographics/firsttimers", "Какая доля учеников участвует на РО в первый раз?", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
     
     def first_timers_by_grade(self, grade):
         graph = Graph()
@@ -153,7 +159,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=kind, orientation='h', marker_color=self.BINARY[i],
                                  text=yValLabels, textposition='auto', legendrank=1-i))
-        graph.horizontal_bar_plot(traces, f"demographics/firsttimers-grade{grade}", f"Какая доля учеников ({grade} кл.) участвует на РО в первый раз?")
+        graph.plot_data(traces, f"demographics/firsttimers-grade{grade}", f"Какая доля учеников ({grade} кл.) участвует на РО в первый раз?", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def preparation_time(self):
         graph = Graph()
@@ -174,7 +181,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=time, orientation='h', marker_color=self.VIOLET5[i],
                                  text=yValLabels, textposition='auto'))
-        graph.horizontal_bar_plot(traces, "demographics/preptime", "Как долго ученики готовятся к РО?")
+        graph.plot_data(traces, "demographics/preptime", "Как долго ученики готовятся к РО?", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
                 
     def preparation_style(self):
         graph = Graph()
@@ -197,7 +205,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=style, orientation='h', marker_color=self.LIKERT[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, "demographics/prepstyle", "Как ученики готовятся к РО: с учителем или самостоятельно?")
+        graph.plot_data(traces, "demographics/prepstyle", "Как ученики готовятся к РО: с учителем или самостоятельно?", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def did_you_know(self):
         graph = Graph()
@@ -228,7 +237,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=list(keyToInd), x=yVals, name=yesno, orientation='h', marker_color=self.BINARYHOT[1-i],
                                  text=yValLabels, textposition='auto', legendrank=1-i))
-        graph.horizontal_bar_plot(traces, "demographics/shortquestions", "Степень осведомленности участников РО о доступных ресурсах")
+        graph.plot_data(traces, "demographics/shortquestions", "Степень осведомленности участников РО о доступных ресурсах", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def problem_difficulty(self, grade):
         graph = Graph()
@@ -247,7 +257,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=f"{diff+1}/5", orientation='h', marker_color=self.RED5[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, f"demographics/difficulty-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были сложными?<br>(1 - легкие, 5 - сложные)")
+        graph.plot_data(traces, f"demographics/difficulty-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были сложными?<br>(1 - легкие, 5 - сложные)", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def problem_volume(self, grade):
         graph = Graph()
@@ -266,7 +277,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=f"{diff+1}/5", orientation='h', marker_color=self.RED5[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, f"demographics/volume-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были объемными?<br>(1 - времени было достаточно, 5 - времени не хватало)")
+        graph.plot_data(traces, f"demographics/volume-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были объемными?<br>(1 - времени было достаточно, 5 - времени не хватало)", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def problem_interest(self, grade):
         graph = Graph()
@@ -285,7 +297,8 @@ class Analyzer:
             yValLabels = [f"{val}%" for val in yVals]
             traces.append(go.Bar(y=self.xValsStages, x=yVals, name=f"{diff+1}/5", orientation='h', marker_color=self.GREEN5[i],
                                  text=yValLabels, textposition='auto', legendrank=4-i))
-        graph.horizontal_bar_plot(traces, f"demographics/interest-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были интересными?<br>(1 - скучные, 5 - интересные)")
+        graph.plot_data(traces, f"demographics/interest-grade{grade}", f"Насколько задания теоретического тура ({grade} кл.) были интересными?<br>(1 - скучные, 5 - интересные)", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
          
 if __name__ == "__main__":
     a = Analyzer()

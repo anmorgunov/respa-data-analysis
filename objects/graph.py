@@ -83,41 +83,24 @@ class Graph:
                     color=self.BLACK,
                 ),)
 
-    def _save_fig(self, figure, fname, html=False, jpg=True, svg=False, pdf=True):
+    def _save_fig(self, figure, fname, html=False, jpg=True, svg=True, pdf=True):
         if html: figure.write_html(f"export/html/{fname}.html", include_plotlyjs='cdn')
         if jpg: figure.write_image(f"export/jpg/{fname}.jpg", scale=4.0)
         if svg: figure.write_image(f"export/svg/{fname}.svg")
         if pdf: figure.write_image(f"export/pdf/{fname}.pdf")
-    
-    def vertical_bar_plot(self, traces, fname, title):
-        fig = go.Figure()
-        for trace in traces:
-            fig.add_trace(trace)
-        self._update_fig(fig, title)
-        self._update_axes(fig, ydtick=0.2)
-        fig.update_yaxes(range=[0, 1], showgrid=False)
-        fig.update_xaxes(showgrid=False)
-        fig.update_layout(barmode="stack", width=1080)
-        self._save_fig(fig, fname)
 
-    def horizontal_bar_plot(self, traces, fname, title):
+    def plot_data(self, traces, fname, title, yaxisparams=None, xaxisparams=None, layoutparams=None):
+        if yaxisparams is None: yaxisparams = {}
+        if xaxisparams is None: xaxisparams = {}
+        if layoutparams is None: layoutparams = {}
         fig = go.Figure()
         for trace in traces:
             fig.add_trace(trace)
         self._update_fig(fig, title)
         self._update_axes(fig)
-        fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None, showgrid=False)
-        fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
-        self._save_fig(fig, fname)
-
-    def plot_heatmap(self, traces, fname, title):
-        fig = go.Figure()
-        for trace in traces:
-            fig.add_trace(trace)
-        self._update_fig(fig, title)
-        self._update_axes(fig)
-        # fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None)
-        # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
+        fig.update_yaxes(**yaxisparams)
+        fig.update_xaxes(**xaxisparams)
+        fig.update_layout(**layoutparams)
         self._save_fig(fig, fname)
 
     def plot_histogram(self, traces, fname, title):
@@ -127,7 +110,6 @@ class Graph:
         self._update_fig(fig, title)
         self._update_axes(fig, xdtick=5)
         fig.update_xaxes(range=[0, 70])
-        # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
     
     def plot_subplot_histograms(self, rows, cols, traces, fname, titles, title):
@@ -138,17 +120,6 @@ class Graph:
         self._update_axes(fig, xdtick=30,)
         fig.update_xaxes(range=[0,100], showgrid=False)
         fig.update_layout(showlegend=False)
-        self._save_fig(fig, fname)
-
-    def plot_box_plots(self, traces, fname, title):
-        fig = go.Figure()
-        for trace in traces:
-            fig.add_trace(trace)
-        self._update_fig(fig, title)
-        self._update_axes(fig, xdtick=10)
-        fig.update_xaxes(range=[0, 100])
-        fig.update_layout(showlegend=False)
-        # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
 
     def plot_linechart(self, traces, fname, title, xtitle, ytitle, eq):
@@ -167,11 +138,3 @@ class Graph:
             showarrow=False,
         )
         self._save_fig(fig, fname)
-    
-    def create_bar_trace(self, name, xVals, yVals, colors):
-        # text = [round(yVal, 1) for yVal in yVals]
-        return go.Bar(name=name, x=xVals, y=yVals,
-                        # text=text,
-                        marker_color=colors,
-                        orientation='h'
-                        )

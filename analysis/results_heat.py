@@ -32,13 +32,13 @@ class Analyzer:
         cortext = [self.ROUND3(cor) for cor in corrs]
         labels = [f"№{i}" for i in range(1, NUMPROB+1)]
         traces = [go.Heatmap(z=corrs, text=cortext, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-        graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}", f"Корреляция между задачами ({grade} кл.)")
+        graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}", f"Корреляция между задачами ({grade} кл.)")
         if do_fit:
             bestfit = [[np.polyfit(self.results_for_problem(data, i+1), self.results_for_problem(data, j+1), 1)
                         for j in range(NUMPROB)] for i in range(NUMPROB)]
             ffit = [[f"{self.ROUND3(arr[0])}x+{self.ROUND3(arr[1])}" for arr in row] for row in bestfit]
             traces = [go.Heatmap(z=corrs, text=ffit, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-            graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами ({grade} кл.)")
+            graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами ({grade} кл.)")
 
     def heat_map_for_grade_averaged(self, grade, do_fit=True):
         graph = Graph()
@@ -66,13 +66,7 @@ class Analyzer:
         cortext = [self.ROUND3(cor) for cor in corrs]
         labels = [f"№{i}" for i in range(1, NUMPROB+1)]
         traces = [go.Heatmap(z=corrs, text=cortext, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-        graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-avg", f"Корреляция между средним за задачу (x, y)<br>и средним за все остальные задачи ({grade} кл.)")
-        # if do_fit:
-        #     bestfit = [[np.polyfit(self.results_for_problem(data, i+1), self.results_for_problem(data, j+1), 1)
-        #                 for j in range(NUMPROB)] for i in range(NUMPROB)]
-        #     ffit = [[f"{self.ROUND3(arr[0])}x+{self.ROUND3(arr[1])}" for arr in row] for row in bestfit]
-        #     traces = [go.Heatmap(z=corrs, text=ffit, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-        #     graph.plot_heatmap(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами ({grade} кл.)")
+        graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-avg", f"Корреляция между средним за задачу (x, y)<br>и средним за все остальные задачи ({grade} кл.)")
 
     def line_two_problems(self, grade, i, j):
         graph = Graph()

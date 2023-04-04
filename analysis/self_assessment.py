@@ -21,6 +21,9 @@ class Analyzer:
              "У меня были идеи по решению<br>задачи, но я не смог(ла)<br>их довести до ума",
              "Я решил(а) задачу,<br>но думаю у меня есть ошибки",
              "Я решил(а) эту задачу<br>и уверен, что решил(а)<br>правильно на 80% и больше."]
+    xAxisParams = dict(range=[0, 100], dtick=10)
+    layoutParams = dict(showlegend=False)
+
     def __init__(self, bygrade_scores, bygrade_responses, OLYMP):
         self.ROUND3 = tools.rounder(3)
         self.scores = bygrade_scores
@@ -72,7 +75,8 @@ class Analyzer:
         bins = [list(itertools.chain(*sublist)) for sublist in zip(*bins_bygrade)]
 
         traces = [go.Box(x=bins[i], name=name) for i, name in enumerate(self.xVals) ] 
-        graph.plot_box_plots(reversed(traces), f"selfassessment/{self.OLYMP}allgrade-box", f"Соответствие рефлексии конечному результату (9-11 кл.)")
+        graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}allgrade-box", f"Соответствие рефлексии конечному результату (9-11 кл.)", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def box_plots_by_grade(self, grade):
         graph = Graph()
@@ -83,7 +87,8 @@ class Analyzer:
 
         
         traces = [go.Box(x=bins[i], name=name) for i, name in enumerate(self.xVals) ] 
-        graph.plot_box_plots(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-box", f"Соответствие рефлексии конечному результату ({grade} кл.)")
+        graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-box", f"Соответствие рефлексии конечному результату ({grade} кл.)", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def box_plots_by_problem(self, grade):
         graph = Graph()
@@ -92,7 +97,8 @@ class Analyzer:
         for i in range(NUMPROBS):
             bins = self.create_bins(data, f"problem{i+1}")
             traces = [go.Box(x=bins[i], name=name) for i, name in enumerate(self.xVals) ] 
-            graph.plot_box_plots(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-problem{i+1}-box", f"Соответствие рефлексии конечному результату<br>(Задача №{i+1}; {grade} кл.)")
+            graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-problem{i+1}-box", f"Соответствие рефлексии конечному результату<br>(Задача №{i+1}; {grade} кл.)", 
+                        xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def calculate_correlation(self, grade):
         data = self.gradeToStudent[grade]
@@ -109,13 +115,13 @@ if __name__ == "__main__":
     survey_oblast_full, survey_oblast_bygrade = parsers.survey.parse_responses("oblast")
 
     OLYMP = 'respa/'
-    # a = Analyzer(respa_bygrade, survey_respa_bygrade, OLYMP)
-    # for grade in (11, 10, 9):
-    #     a.combine_students(grade)
-    #     a.box_plots_by_grade(grade)
-    #     a.box_plots_by_problem(grade)
+    a = Analyzer(respa_bygrade, survey_respa_bygrade, OLYMP)
+    for grade in (11, 10, 9):
+        a.combine_students(grade)
+        a.box_plots_by_grade(grade)
+        a.box_plots_by_problem(grade)
     
-    # a.box_plots_total()
+    a.box_plots_total()
 
     OLYMP = 'oblast/'
     a = Analyzer(oblast_bygrade, survey_oblast_bygrade, OLYMP)
@@ -130,5 +136,3 @@ if __name__ == "__main__":
     #                         12 and 8              grade 10
     #                         24 and 7              grade 9
     
-    # a.plot_correlations_by_grade()
-    # a.plot_correlations_by_oblast()
