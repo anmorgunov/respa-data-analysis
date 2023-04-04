@@ -17,6 +17,19 @@ class Analyzer:
         self.oblToGrToStuds = {}
 
     def combine_students(self, grade, oblast=None):
+        """Combine students by grade and optionally by oblast.
+
+        Parameters:
+            - self (object): Object instance
+            - grade (int): Grade level (9, 10, or 11)
+            - oblast (str, optional): Name of the oblast (region) of interest (default is None)
+
+        Returns:
+            - dict: A dictionary mapping grades to a list of Student objects. Each Student object contains the name and scores of the participant, and can belong to either the RESPA or OBlast Olympiad (or both).
+
+        Description:
+        This function combines participant scores from either the RESPA or the Oblast Olympiad, or both, by matching the names of the participants. The resulting dictionary maps grades to a list of Student objects, each containing the name and scores of the corresponding participant. If an oblast is specified, the function combines only the scores of participants from that oblast.
+        """
         grToStudents = {}
         if not oblast:
             name_to_objs = find_similar_matches([self.respa_bygrade[grade], self.oblast_bygrade[grade]], "name", testing=False)
@@ -33,6 +46,18 @@ class Analyzer:
         return grToStudents
 
     def get_oblast_respa_arrays(self, data, scale=100/70):
+        """
+        Given a list of objects containing the `oblast_score` and `respa_score` attributes, this function returns two arrays
+        `obl` and `resp`, where `obl` contains the values of `oblast_score` attribute of the objects in `data`, scaled by the
+        given `scale` factor, and `resp` contains the values of `respa_score` attribute of the objects in `data`, scaled by the
+        same factor.
+
+        :param self: the object instance
+        :param data: a list of objects containing `oblast_score` and `respa_score` attributes
+        :param scale: the factor by which to scale the `oblast_score` and `respa_score` values (default: 100/70)
+        :return: a tuple containing two arrays `obl` and `resp`, where `obl` contains the scaled `oblast_score` values and
+                `resp` contains the scaled `respa_score` values
+        """
         obl, resp = [], []
         for obj in data:
             if hasattr(obj, "oblast_score") and hasattr(obj, "respa_score"):
@@ -41,6 +66,13 @@ class Analyzer:
         return obl, resp
     
     def calculate_correlation(self, grade):
+        """Calculates the correlation coefficient between the scores of students from oblast and respa stages for a given grade.
+
+        Parameters:
+            - grade (int): The grade level of the students for which to calculate the correlation coefficient.
+        
+        Returns:
+            - The correlation coefficient as a numpy array."""
         data = self.gradeToStudent[grade]
         oblast, respa = self.get_oblast_respa_arrays(data)
         return np.corrcoef(oblast, respa)
