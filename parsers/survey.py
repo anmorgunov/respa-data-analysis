@@ -2,6 +2,17 @@ import json
 from objects.response import Response
 
 def parse_responses(stage):
+    """
+    Parses JSON responses from the specified stage and creates Response objects for each participant. 
+
+    Args:
+    - stage (str): the stage of the competition to parse responses from
+    
+    Returns:
+    - full (list): a list of Response objects representing all participants
+    - bygrade (dict): a dictionary of Response objects, with keys as grades and values as lists of participants in that grade
+
+    """
     with open(f"data/feedback/{stage}.json", 'r') as f:
         responses = json.load(f)
     full = []

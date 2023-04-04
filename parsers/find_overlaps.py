@@ -3,6 +3,15 @@
 # Group by attribute (EXACT MATCH)
 
 def find_exact_matches(data, attribute):
+    """Find and return a list of exact matches for a given attribute in a 2D list of objects.
+
+    Args:
+        data: A 2D list of objects.
+        attribute: A string representing the attribute to search for.
+
+    Returns:
+        A list of lists, where each sublist contains objects with the same attribute value.
+    """
     attr_to_obj = {}
     for sublist in data:
         for obj in sublist:
@@ -18,10 +27,30 @@ def find_exact_matches(data, attribute):
         for obj in objects:
             print("-", obj.name)
     print(f"Found {len(duplicates)} exact matches")
+    return duplicates
 
 from fuzzywuzzy import fuzz 
 
 def find_similar_matches(data, attribute, threshold=90, testing=True):
+    """Find similar matches of objects in `data` based on the `attribute` using fuzzy string matching.
+
+    Parameters:
+    -----------
+    data : list
+        List of lists containing objects with attributes to be matched.
+    attribute : str
+        Name of the attribute to be matched.
+    threshold : int, optional (default=90)
+        Threshold value for the fuzzy string matching algorithm. 
+        Objects with a matching score above this threshold will be considered as similar.
+    testing : bool, optional (default=True)
+        Whether to print out the matches found.
+
+    Returns:
+    --------
+    dict
+        A dictionary where the keys are the matched attributes and the values are the lists of matched objects.
+    """
     attr_to_obj = {}
     for sublist in data:
         for obj in sublist:

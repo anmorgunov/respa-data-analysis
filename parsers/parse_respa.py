@@ -3,6 +3,18 @@ from objects.result import Result
 import tools
 
 def parse_results(year):
+    """
+    Parses the results of the Republican Subject Olympiad (RESPA) from an Excel file for the given year.
+
+    Args:
+        year (int): The year of the Olympiad.
+
+    Returns:
+        dict: A dictionary containing the parsed results for each grade. The keys of the dictionary are the grade
+        levels (9, 10, and 11), and the values are lists of Result objects representing the results for each student
+        in the corresponding grade level.
+
+    """
     bygrade = {}
     wb = load_workbook(f"data/results/respa/{year}.xlsx", data_only=True)
     for grade in (9, 10, 11,):
