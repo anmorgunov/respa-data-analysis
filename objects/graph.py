@@ -21,14 +21,16 @@ class Graph:
         Args:
             figure (obj): a plotly Figure graph object
         """
+        scale = 1 if "<br>" not in title else 1.3
         figure.update_layout(
             title=dict(
                 text=title,
                 y=0.9,
                 x=0.5,
                 xanchor='center',
-                yanchor='top'
+                yanchor='top',
             ),
+            margin=dict(t=100*scale),
             font = dict(
                 family=self.FONT,
                 size=self.TITLE_SIZE,
@@ -81,12 +83,23 @@ class Graph:
                     color=self.BLACK,
                 ),)
 
-    def _save_fig(self, figure, fname, html=False, jpg=False, svg=False, pdf=True):
+    def _save_fig(self, figure, fname, html=False, jpg=True, svg=False, pdf=True):
         if html: figure.write_html(f"export/html/{fname}.html", include_plotlyjs='cdn')
         if jpg: figure.write_image(f"export/jpg/{fname}.jpg", scale=4.0)
         if svg: figure.write_image(f"export/svg/{fname}.svg")
         if pdf: figure.write_image(f"export/pdf/{fname}.pdf")
     
+    def vertical_bar_plot(self, traces, fname, title):
+        fig = go.Figure()
+        for trace in traces:
+            fig.add_trace(trace)
+        self._update_fig(fig, title)
+        self._update_axes(fig, ydtick=0.2)
+        fig.update_yaxes(range=[0, 1], showgrid=False)
+        fig.update_xaxes(showgrid=False)
+        fig.update_layout(barmode="stack", width=1080)
+        self._save_fig(fig, fname)
+
     def horizontal_bar_plot(self, traces, fname, title):
         fig = go.Figure()
         for trace in traces:
@@ -117,11 +130,11 @@ class Graph:
         # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
     
-    def plot_subplot_histograms(self, rows, cols, traces, fname, titles):
+    def plot_subplot_histograms(self, rows, cols, traces, fname, titles, title):
         fig = make_subplots(rows=rows, cols=cols, subplot_titles=titles)
         for trace, row, col in traces:
             fig.add_trace(trace, row=row, col=col)
-        self._update_fig(fig)
+        self._update_fig(fig, title)
         self._update_axes(fig, xdtick=30,)
         fig.update_xaxes(range=[0,100], showgrid=False)
         fig.update_layout(showlegend=False)

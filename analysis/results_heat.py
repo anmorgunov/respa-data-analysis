@@ -62,11 +62,11 @@ class Analyzer:
             return
         NUMPROB = max(numprobs)
         x = self.total_results(data)
-        titles = [f"Задача №{i+1}" for i in range(NUMPROB)] + ["Общий балл"]
+        subtitles = [f"Задача №{i+1}" for i in range(NUMPROB)] + ["Общий балл"]
         traces = [(go.Histogram(x=self.results_for_problem(data, i+1), nbinsx=10, histnorm='probability', name=f"Задача №{i+1}"), i//3+1, i%3+1) for i in range(NUMPROB)] \
             + [(go.Histogram(x=x, nbinsx=10, histnorm='probability', name="Общий балл"), NUMPROB//3+1, NUMPROB%3+1)]
         graph.plot_subplot_histograms(NUMPROB//3+1, 3, traces, 
-                                      f"results/{self.year}/{self.OLYMP}grade{grade}-dist-problemwise", titles)
+                                      f"results/{self.year}/{self.OLYMP}grade{grade}-dist-problemwise", subtitles, f"Распределение баллов по задачам ({grade} кл.)")
         # graph.plot_histogram(traces, f"results/{self.year}/grade{grade}-dist", f"Распределение баллов в {grade} кл.")
 
     def box_plots_for_grade(self, grade):
@@ -78,15 +78,17 @@ class Analyzer:
         NUMPROB = max(numprobs)
         traces = [go.Box(x=self.results_for_problem(data, i+1), name=f"Задача №{i+1}") for i in range(NUMPROB)] + \
                 [go.Box(x=self.total_results(data), name='Общий балл')]
-        graph.plot_box_plots(reversed(traces), f"results/{self.year}/{self.OLYMP}grade{grade}-dist-box", "Распределение баллов по задачам")
+        graph.plot_box_plots(reversed(traces), f"results/{self.year}/{self.OLYMP}grade{grade}-dist-box", f"Распределение баллов по задачам ({grade} кл.)")
 
 if __name__ == "__main__":
     # First, let's analyze respa results
-    # OLYMP = "respa/"
+    OLYMP = "respa/"
     # for year in (2023, 2022, 2021):
     #     a = Analyzer(year, parsers.parse_respa.parse_results(year), OLYMP)
     #     for grade in (9, 10, 11):
     #         a.heat_map_for_grade(grade)
+    #         a.histograms_for_grade(grade)
+    #         a.box_plots_for_grade(grade)
     
     # a = Analyzer(2023, parsers.parse_respa.parse_results(2023), OLYMP)
     # a.line_two_problems(11, 2, 8)
@@ -100,11 +102,7 @@ if __name__ == "__main__":
     # a.line_two_problems(10, 4, 7)
     # a.line_two_problems(10, 5, 6)
 
-    # for year in (2023, 2022, 2021):
-    #     a = Analyzer(year, parsers.parse_respa.parse_results(year), OLYMP)
-    #     for grade in (9, 10, 11):
-    #         a.histograms_for_grade(grade)
-    #         a.box_plots_for_grade(grade)
+
 
     # Now, let's do some oblast stuff
     OLYMP = "oblast/"

@@ -39,6 +39,7 @@ def parse_results():
                 re.total = 0
                 re.only_total = False
                 re.oblast = oblast
+                re.olymp_name = "oblast"
                 skip = False
                 if re.name is not None:
                     col = 'E'

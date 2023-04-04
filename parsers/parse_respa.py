@@ -13,6 +13,7 @@ def parse_results(year):
             re.name = ws['A'+str(row)].value
             re.total = 0
             re.only_total = False
+            re.olymp_name = "respa"
             if re.name is not None:
                 col = 'C'
                 while True:
