@@ -6,3 +6,6 @@ class Result:
     def __repr__(self):
         assert hasattr(self, "name"), "Результат без имени?"
         return self.name
+    
+    def __eq__(self, name):
+        return self.name == name

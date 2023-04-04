@@ -1,5 +1,7 @@
 import plotly.graph_objects as go
-# from plotly.subplots import make_subplots
+from plotly.subplots import make_subplots
+import plotly.io as pio   
+pio.kaleido.scope.mathjax = None
 
 class Graph:
     def __init__(self):
@@ -79,7 +81,7 @@ class Graph:
                     color=self.BLACK,
                 ),)
 
-    def _save_fig(self, figure, fname, html=False, jpg=True, svg=False, pdf=True):
+    def _save_fig(self, figure, fname, html=False, jpg=False, svg=False, pdf=True):
         if html: figure.write_html(f"export/html/{fname}.html", include_plotlyjs='cdn')
         if jpg: figure.write_image(f"export/jpg/{fname}.jpg", scale=4.0)
         if svg: figure.write_image(f"export/svg/{fname}.svg")
@@ -102,6 +104,37 @@ class Graph:
         self._update_fig(fig, title)
         self._update_axes(fig)
         # fig.update_xaxes(range=[0, 100], showticklabels=False, ticks=None)
+        # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
+        self._save_fig(fig, fname)
+
+    def plot_histogram(self, traces, fname, title):
+        fig = go.Figure()
+        for trace in traces:
+            fig.add_trace(trace)
+        self._update_fig(fig, title)
+        self._update_axes(fig, xdtick=5)
+        fig.update_xaxes(range=[0, 70])
+        # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
+        self._save_fig(fig, fname)
+    
+    def plot_subplot_histograms(self, rows, cols, traces, fname, titles):
+        fig = make_subplots(rows=rows, cols=cols, subplot_titles=titles)
+        for trace, row, col in traces:
+            fig.add_trace(trace, row=row, col=col)
+        self._update_fig(fig)
+        self._update_axes(fig, xdtick=30,)
+        fig.update_xaxes(range=[0,100], showgrid=False)
+        fig.update_layout(showlegend=False)
+        self._save_fig(fig, fname)
+
+    def plot_box_plots(self, traces, fname, title):
+        fig = go.Figure()
+        for trace in traces:
+            fig.add_trace(trace)
+        self._update_fig(fig, title)
+        self._update_axes(fig, xdtick=5)
+        fig.update_xaxes(range=[0, 100])
+        fig.update_layout(showlegend=False)
         # fig.update_layout(barmode="stack", width=1080, legend_traceorder='reversed')
         self._save_fig(fig, fname)
 

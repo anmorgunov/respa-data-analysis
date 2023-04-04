@@ -26,7 +26,7 @@ MAX_SCORE = {
 
 PATH = "data/results/oblast/"
 def parse_results():
-    bygrade = {}
+    bygrade, byoblast = {}, {}
     oblasts = [f for f in os.listdir(PATH) if os.path.isdir(os.path.join(PATH, f))]
     for oblast in oblasts:
         for grade in (11, 10, 9):
@@ -38,6 +38,8 @@ def parse_results():
                 re.name = ws['C'+str(row)].value
                 re.total = 0
                 re.only_total = False
+                re.oblast = oblast
+                skip = False
                 if re.name is not None:
                     col = 'E'
                     while True:
@@ -45,6 +47,7 @@ def parse_results():
                             num = int(ws[col+'2'].value.split()[0])
                             maxscore = MAX_SCORE[grade][num]
                             if ws[col+str(row)].value is None and col == 'E':
+                                skip = True
                                 break #skip participant
                             res = float(ws[col+str(row)].value)
                             # print(res, oblast, grade, col, row)
@@ -62,9 +65,11 @@ def parse_results():
                         col = tools.getNextCol(col)
                 else:
                     break
-                bygrade.setdefault(grade, []).append(re)
+                if not skip:
+                    bygrade.setdefault(grade, []).append(re)
+                    byoblast.setdefault(oblast, {}).setdefault(grade, []).append(re)
                 row += 1
-    return bygrade
+    return bygrade, byoblast
     
 
 
