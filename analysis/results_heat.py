@@ -8,6 +8,10 @@ import os
 
 class Analyzer:
 
+    layoutParams = dict(width=800, margin=dict(b=0, t=75))
+    OLTOSTAGE = {"respa/": "заключительный этап",
+                 "oblast/": "областной этап"}
+
     def __init__(self, year, bygrade, olymp=''):
         self.ROUND3 = tools.rounder(3)
         self.year = year
@@ -32,13 +36,15 @@ class Analyzer:
         cortext = [self.ROUND3(cor) for cor in corrs]
         labels = [f"№{i}" for i in range(1, NUMPROB+1)]
         traces = [go.Heatmap(z=corrs, text=cortext, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-        graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}", f"Корреляция между задачами ({grade} кл.)")
+        layoutParams = {key:val for key, val in self.layoutParams.items()}
+        layoutParams["margin"]["t"] = 100
+        graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}", f"Корреляция между задачами<br>({grade} кл., {self.OLTOSTAGE[self.OLYMP]}, {self.year-1}-{self.year} уч. год)", layoutparams=layoutParams)
         if do_fit:
             bestfit = [[np.polyfit(self.results_for_problem(data, i+1), self.results_for_problem(data, j+1), 1)
                         for j in range(NUMPROB)] for i in range(NUMPROB)]
             ffit = [[f"{self.ROUND3(arr[0])}x+{self.ROUND3(arr[1])}" for arr in row] for row in bestfit]
             traces = [go.Heatmap(z=corrs, text=ffit, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-            graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами ({grade} кл.)")
+            graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-fit", f"Корреляция между задачами<br>({grade} кл., {self.OLTOSTAGE[self.OLYMP]}, {self.year-1}-{self.year} уч. год)", layoutparams=self.layoutParams)
 
     def heat_map_for_grade_averaged(self, grade, do_fit=True):
         graph = Graph()
@@ -66,7 +72,9 @@ class Analyzer:
         cortext = [self.ROUND3(cor) for cor in corrs]
         labels = [f"№{i}" for i in range(1, NUMPROB+1)]
         traces = [go.Heatmap(z=corrs, text=cortext, texttemplate="%{text}", x=labels, y=labels, colorscale='dense')]
-        graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-avg", f"Корреляция между средним за задачу (x, y)<br>и средним за все остальные задачи ({grade} кл.)")
+        layoutParams = {key:val for key, val in self.layoutParams.items()}
+        layoutParams["margin"]["t"] = 100
+        graph.plot_data(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-avg", f"Корреляция между средним за задачу (x, y) и средним за все остальные<br>задачи ({grade} кл., {self.OLTOSTAGE[self.OLYMP]}, {self.year-1}-{self.year} уч. год)", layoutparams=layoutParams)
 
     def line_two_problems(self, grade, i, j):
         graph = Graph()
@@ -80,7 +88,7 @@ class Analyzer:
         yfit = np.vectorize(lambda x: fit[0]*x+fit[1])(xgrid)
         traces = [go.Scatter(x=x, y=y, mode='markers', name="Результаты"),
                   go.Scatter(x=xgrid, y=yfit, mode='lines', name="Best fit")]
-        graph.plot_linechart(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-{i}-{j}", f"Корреляция между задачами {i} и {j}", f"Задача №{i}", f"Задача №{j}", eq)
+        graph.plot_linechart(traces, f"results/{self.year}/{self.OLYMP}grade{grade}-{i}-{j}", f"Корреляция между задачами {i} и {j} ({grade} кл., {self.OLTOSTAGE[self.OLYMP]}, {self.year-1}-{self.year} уч. год)", f"Задача №{i}", f"Задача №{j}", eq)
 
     def histograms_for_grade(self, grade):
         graph = Graph()
@@ -93,9 +101,11 @@ class Analyzer:
         subtitles = [f"Задача №{i+1}" for i in range(NUMPROB)] + ["Общий балл"]
         traces = [(go.Histogram(x=self.results_for_problem(data, i+1), nbinsx=10, histnorm='probability', name=f"Задача №{i+1}"), i//3+1, i%3+1) for i in range(NUMPROB)] \
             + [(go.Histogram(x=x, nbinsx=10, histnorm='probability', name="Общий балл"), NUMPROB//3+1, NUMPROB%3+1)]
+        layoutParams = {key:val for key, val in self.layoutParams.items()}
+        layoutParams["margin"]["t"] = 120
         graph.plot_subplot_histograms(NUMPROB//3+1, 3, traces, 
-                                      f"results/{self.year}/{self.OLYMP}grade{grade}-dist-problemwise", subtitles, f"Распределение баллов по задачам ({grade} кл.)")
-        # graph.plot_histogram(traces, f"results/{self.year}/grade{grade}-dist", f"Распределение баллов в {grade} кл.")
+                                      f"results/{self.year}/{self.OLYMP}grade{grade}-dist-problemwise", subtitles, f"Распределение баллов (в %) по задачам<br>({grade} кл., {self.OLTOSTAGE[self.OLYMP]}, {year-1}-{year} уч. год)", layoutparams=layoutParams)
+        # graph.plot_histogram(traces, f"results/{self.year}/grade{grade}-dist", f"Распределение баллов (в %) в {grade} кл.")
 
     def box_plots_for_grade(self, grade):
         graph = Graph()
@@ -106,7 +116,10 @@ class Analyzer:
         NUMPROB = max(numprobs)
         traces = [go.Box(x=self.results_for_problem(data, i+1), name=f"Задача №{i+1}") for i in range(NUMPROB)] + \
                 [go.Box(x=self.total_results(data), name='Общий балл')]
-        graph.plot_box_plots(reversed(traces), f"results/{self.year}/{self.OLYMP}grade{grade}-dist-box", f"Распределение баллов по задачам ({grade} кл.)")
+        layoutParams = {key:val for key, val in self.layoutParams.items()}
+        layoutParams["showlegend"] = False
+        graph.plot_data(reversed(traces), f"results/{self.year}/{self.OLYMP}grade{grade}-dist-box", f"Распределение баллов (в %) по задачам<br>({grade} кл., {self.OLTOSTAGE[self.OLYMP]}, {year-1}-{year} уч. год)", layoutparams=layoutParams,
+                        xaxisparams=dict(dtick=5, range=[0, 100]))
 
 if __name__ == "__main__":
     # First, let's analyze respa results
@@ -117,9 +130,9 @@ if __name__ == "__main__":
         a = Analyzer(year, parsers.parse_respa.parse_results(year), OLYMP)
         for grade in (9, 10, 11):
             a.heat_map_for_grade_averaged(grade)
-            # a.heat_map_for_grade(grade)
-            # a.histograms_for_grade(grade)
-    #         a.box_plots_for_grade(grade)
+            a.heat_map_for_grade(grade)
+            a.histograms_for_grade(grade)
+            a.box_plots_for_grade(grade)
     
     # a = Analyzer(2023, parsers.parse_respa.parse_results(2023), OLYMP)
     # a.line_two_problems(11, 2, 8)
@@ -141,9 +154,9 @@ if __name__ == "__main__":
     a = Analyzer(2023, bygrade, OLYMP)
     for grade in (9, 10, 11):
         a.heat_map_for_grade_averaged(grade)
-    #     a.heat_map_for_grade(grade)
-    #     a.histograms_for_grade(grade)
-    #     a.box_plots_for_grade(grade)
+        a.heat_map_for_grade(grade)
+        a.histograms_for_grade(grade)
+        a.box_plots_for_grade(grade)
 
     # base_path = 'export/html/results/2023/oblast/'
     # # Create a folder for each name

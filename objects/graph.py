@@ -37,7 +37,8 @@ class Graph:
                 color=self.BLACK,
             ),
             # showlegend=False,
-            plot_bgcolor=self.BG_COLOR
+            plot_bgcolor=self.BG_COLOR,
+            legend=dict(font=dict(size=self.LEGEND_SIZE))
         )
 
     def _update_axes(self, figure, xdtick=1, ydtick=1, xtitle='', ytitle=''):
@@ -89,37 +90,20 @@ class Graph:
         if svg: figure.write_image(f"export/svg/{fname}.svg")
         if pdf: figure.write_image(f"export/pdf/{fname}.pdf")
 
-    def plot_data(self, traces, fname, title, yaxisparams=None, xaxisparams=None, layoutparams=None):
+    def plot_data(self, traces, fname, title, xtitle='', ytitle='', eq=None, yaxisparams=None, xaxisparams=None, layoutparams=None):
         if yaxisparams is None: yaxisparams = {}
         if xaxisparams is None: xaxisparams = {}
         if layoutparams is None: layoutparams = {}
+        # if eq is None: eq = {}
         fig = go.Figure()
         for trace in traces:
             fig.add_trace(trace)
         self._update_fig(fig, title)
-        self._update_axes(fig)
+        self._update_axes(fig, xtitle=xtitle, ytitle=ytitle)
         fig.update_yaxes(**yaxisparams)
         fig.update_xaxes(**xaxisparams)
         fig.update_layout(**layoutparams)
-        self._save_fig(fig, fname)
-
-    def plot_histogram(self, traces, fname, title):
-        fig = go.Figure()
-        for trace in traces:
-            fig.add_trace(trace)
-        self._update_fig(fig, title)
-        self._update_axes(fig, xdtick=5)
-        fig.update_xaxes(range=[0, 70])
-        self._save_fig(fig, fname)
-    
-    def plot_subplot_histograms(self, rows, cols, traces, fname, titles, title):
-        fig = make_subplots(rows=rows, cols=cols, subplot_titles=titles)
-        for trace, row, col in traces:
-            fig.add_trace(trace, row=row, col=col)
-        self._update_fig(fig, title)
-        self._update_axes(fig, xdtick=30,)
-        fig.update_xaxes(range=[0,100], showgrid=False)
-        fig.update_layout(showlegend=False)
+        if eq is not None: fig.add_annotation(**eq)
         self._save_fig(fig, fname)
 
     def plot_linechart(self, traces, fname, title, xtitle, ytitle, eq):
@@ -138,3 +122,24 @@ class Graph:
             showarrow=False,
         )
         self._save_fig(fig, fname)
+
+    def plot_histogram(self, traces, fname, title):
+        fig = go.Figure()
+        for trace in traces:
+            fig.add_trace(trace)
+        self._update_fig(fig, title)
+        self._update_axes(fig, xdtick=5)
+        fig.update_xaxes(range=[0, 70])
+        self._save_fig(fig, fname)
+    
+    def plot_subplot_histograms(self, rows, cols, traces, fname, titles, title, layoutparams=None):
+        if layoutparams is None: layoutparams = {}
+        fig = make_subplots(rows=rows, cols=cols, subplot_titles=titles)
+        for trace, row, col in traces:
+            fig.add_trace(trace, row=row, col=col)
+        self._update_fig(fig, title)
+        self._update_axes(fig, xdtick=30,)
+        fig.update_xaxes(range=[0,100], showgrid=False)
+        fig.update_layout(showlegend=False, **layoutparams)
+        self._save_fig(fig, fname)
+

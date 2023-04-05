@@ -8,10 +8,11 @@ import plotly.graph_objects as go
 import tools
 
 class Analyzer:
+    YEAR = 2023
 
     def __init__(self):
         self.ROUND3 = tools.rounder(3)
-        self.respa_bygrade = parsers.parse_respa.parse_results(2023)
+        self.respa_bygrade = parsers.parse_respa.parse_results(self.YEAR)
         self.oblast_bygrade, self.oblast_byoblast = parsers.parse_oblast.parse_results()
         self.gradeToStudent = {}
         self.oblToGrToStuds = {}
@@ -93,14 +94,19 @@ class Analyzer:
             yfit = np.vectorize(lambda x: fit[0]*x+fit[1])(xgrid)
             traces = [go.Scatter(x=oblast, y=respa, mode='markers', name="Результаты"),
                         go.Scatter(x=xgrid, y=yfit, mode='lines', name="Best fit")]
-            graph.plot_linechart(traces, f"trajectory/gr{grade}-data", f"Корреляция между баллами областного<br>и заключительного этапа РО ({grade} кл.)", xtitle="Баллы (из 100%) на теор. туре областного этапа", ytitle="Баллы (из 100%) на теор. туре заключительного этапа", eq=eq)
+            graph.plot_data(traces, f"trajectory/gr{grade}-data", f"Корреляция между баллами областного и<br>заключительного этапа РО ({grade} кл., {self.YEAR-1}-{self.YEAR} уч. год)", xtitle="Баллы (из 100%) на теор. туре областного этапа", ytitle="Баллы (из 100%) на теор. туре<br>заключительного этапа",
+            eq=dict(xref="paper", yref="paper", x=0, y=1, text=eq, showarrow=False),
+            yaxisparams=dict(range=[0, 60], dtick=10),
+            xaxisparams=dict(range=[0, 100], dtick=10),
+            layoutparams=dict(width=720, height=500, margin=dict(b=0, t=100)))
         yValLabels = [self.ROUND3(cor) for cor in corrs]
         traces = [go.Bar(y=corrs, x=[f"{grade} класс" for grade in grades], #marker_color=self.BINARY[i],
                                  text=yValLabels, textposition='auto', )] #legendrank=1-i
-        graph.plot_data(traces, f"trajectory/bygrade", "Корреляция между баллами областного и заключительного этапа",
+        graph.plot_data(traces, f"trajectory/bygrade", f"Корреляция между баллами областного и заключительного этапа<br>({self.YEAR-1}-{self.YEAR} уч. год)",
                         yaxisparams=dict(range=[0, 1], showgrid=False, dtick=0.2),
                         xaxisparams=dict(showgrid=False),
-                        layoutparams=dict(barmode="stack", width=1080))
+                        layoutparams=dict(barmode="stack", width=1080, height=250,
+                                          margin=dict(b=0, t=75)))
 
     def plot_correlations_by_oblast(self):
         graph = Graph()
@@ -131,7 +137,11 @@ class Analyzer:
             yfit = np.vectorize(lambda x: fit[0]*x+fit[1])(xgrid)
             traces = [go.Scatter(x=obl_scores, y=resp_scores, mode='markers', name="Результаты"),
                         go.Scatter(x=xgrid, y=yfit, mode='lines', name="Best fit")]
-            graph.plot_linechart(traces, f"trajectory/obl-{oblast}", f"Корреляция между баллами областного<br>и заключительного этапа РО ({oblast})", xtitle="Баллы (из 100%) на теор. туре областного этапа", ytitle="Баллы (из 100%) на теор. туре заключительного этапа", eq=eq)
+            graph.plot_data(traces, f"trajectory/obl-{oblast}", f"Корреляция между баллами областного и<br>заключительного этапа РО ({oblast}, {self.YEAR-1}-{self.YEAR} уч. год)", xtitle="Баллы (из 100%) на теор. туре областного этапа", ytitle="Баллы (из 100%) на теор. туре<br>заключительного этапа",
+                eq=dict(xref="paper", yref="paper", x=0, y=1, text=eq, showarrow=False),
+                yaxisparams=dict(range=[0, 60], dtick=10),
+                xaxisparams=dict(range=[0, 100], dtick=10),
+                layoutparams=dict(width=720, height=500, margin=dict(b=0, t=100)))
         
         obl_scores, resp_scores = [], []
         for grade in grades:
@@ -144,7 +154,7 @@ class Analyzer:
         corrs.append(np.corrcoef(obl_scores, resp_scores)[0, 1])
         traces = [go.Bar(y=corrs, x=xVals, text=[self.ROUND3(cor) for cor in corrs], 
                          textposition='auto')]
-        graph.plot_data(traces, f"trajectory/byoblast", "Корреляция между баллами областного<br>и заключительного этапа по областям",
+        graph.plot_data(traces, f"trajectory/byoblast", f"Корреляция между баллами областного и<br>заключительного этапа по областям ({self.YEAR-1}-{self.YEAR} уч. год)",
                         yaxisparams=dict(range=[0, 1], showgrid=False, dtick=0.2),
                         xaxisparams=dict(showgrid=False),
                         layoutparams=dict(barmode="stack", width=1080))

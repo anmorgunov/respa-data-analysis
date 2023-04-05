@@ -1,0 +1,182 @@
+\documentclass[12pt,openany]{extbook}
+% \documentclass[a4paper,17pt]{extarticle}
+\usepackage[a4paper, total={7in, 10in}]{geometry}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{2212}{-}
+\DeclareUnicodeCharacter{2502}{|}
+\DeclareUnicodeCharacter{200B}{ }
+\usepackage[russian]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{stackengine}
+\usepackage{multicol}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage[margin=10pt,font=footnotesize,labelfont=bf,labelsep=endash]{caption}
+\newenvironment{Figure}{\par\medskip\noindent\minipage{\linewidth}}{\endminipage\par\medskip}
+\setlength{\headheight}{14.5pt}
+\usepackage{titling}
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+   }%
+}
+\renewcommand{\baselinestretch}{1.15} 
+
+
+% Для химических формул
+% \usepackage[version=4]{mhchem}
+
+% Для матеши
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{fancyhdr}
+\newcommand{\bosversion}{v1.0.\hbox{\today}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\rightmark}
+\lhead{\leftmark}
+\makeatletter
+\let\ps@plain\ps@fancy % plain style = fancy style
+\makeatother
+% \rfoot{Стр. \thepage}
+\fancyfoot[LE,RO]{Стр. \thepage/54}
+\fancyfoot[RE,LO]{\href{https://qazcho.kz}{qazcho.kz}}
+% \fancyfoot[R]{\thepage} % except the right
+% \renewcommand{\contentsname}{Hello}
+% \addto\captionrussian{% Replace "english" with the language you use
+%   \renewcommand{\contentsname}%
+%     {Hello}%
+% }
+% \usepackage{helvet}
+
+% \renewcommand{\sfdefault}{ptm}
+% \usepackage{sectsty}
+% \allsectionsfont{\sffamily\bfseries}
+% \setlength{\beforechapskip}{20pt}
+\makeatletter
+\renewcommand{\@chapapp}{Раздел}
+\makeatother
+
+\usepackage[x11names]{xcolor}
+\usepackage{framed}
+\usepackage{quoting}
+
+ \colorlet{shadecolor}{LavenderBlush2}
+\usepackage{lipsum}
+\newenvironment{shadedquotation}
+ {\begin{shaded*}
+  \quoting[leftmargin=0pt, vskip=0pt]
+ }
+ {\endquoting
+ \end{shaded*}
+}
+
+\usepackage{xcolor}
+
+\usepackage{lipsum} % for mock text
+
+\newsavebox{\coloredquotationbox}
+\newenvironment{coloredquotation}
+ {%
+  \begin{trivlist}
+  \begin{lrbox}{\coloredquotationbox}
+  \begin{minipage}{\dimexpr\linewidth-2\fboxsep}
+ }
+ {%
+  \end{minipage}
+  \end{lrbox}
+  \item\relax
+  \parbox{\linewidth}{
+    \begingroup
+    \color[RGB]{224,215,188}%
+    \hrule
+    \color[RGB]{249,245,233}%
+    \hrule
+    \color[RGB]{224,215,188}%
+    \hrule
+    \endgroup
+    \colorbox[RGB]{249,245,233}{\usebox{\coloredquotationbox}}\par\nointerlineskip
+    \begingroup
+    \color[RGB]{224,215,188}%
+    \hrule
+    \color[RGB]{249,245,233}%
+    \hrule
+    \color[RGB]{224,215,188}%
+    \hrule
+    \endgroup
+  }
+  \end{trivlist}
+ }
+
+\usepackage{titlesec}
+
+\titlespacing*{\section} {0pt}{2.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
+\titlespacing*{\subsection} {0pt}{2.25ex plus 1ex minus .2ex}{0.5ex plus .2ex}
+
+\begin{document}
+
+\begin{titlepage}
+
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+
+\includegraphics[width=0.5\linewidth]{logo_color.jpg}\\[1.0cm]
+
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.5\textwidth}
+\begin{flushleft} \large
+\textsc{\textbf{Республиканская Коллегия Составителей Задач по Олимпиадной Химии}}
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\textsc{\textbf{Профиль участника РО (2022-2023 уч. год)}}\\
+\textsc{\today}
+\end{flushright}
+\end{minipage}\\[2.0cm]
+
+\begin{minipage}{0.93\textwidth}
+\begin{flushleft}
+  
+
+\textbf{\large Введение}\\[0.5cm]
+В 2022-2023 уч. году, комплекты заданий районного, областного и заключительного этапов республиканской олимпиады школьников по химии (далее - РО) сопровождались призывом к участникам оставить обратную связь по прошедшей олимпиаде путем заполнения онлайн опроса, созданного Республиканской Коллегией Составителей Задач по Олимпиадной Химии (далее - Коллегия). 
+
+Первостепенной задачей опроса было получение информации о том, как ученики готовятся к олимпиадам и насколько сложными, объемными и интересными им показались задания. Дополнительно была собрана демографическая информация. В этой заметке предоставляем результат анализа собранных ответов. Главная задача при написании этого документа - улучшить представления составителей заданий о том, какой уровень подготовки имеется у участников того или иного этапа РО. 
+\end{flushleft}
+\end{minipage}
+
+
+\end{titlepage}
+
+
+\def\contentsname{Содержание}
+\tableofcontents
+
+\input{tex/introduction.tex}
+
+\chapter{Подготовка заданий}
+\input{tex/preparation.tex}
+
+\chapter{Демографический профиль}
+\input{tex/demographics.tex}
+
+\chapter{Восприятие олимпиады}
+\input{tex/perception.tex}
+
+\chapter{Результаты РО}
+\input{tex/results.tex}
+
+
+
+\end{document}

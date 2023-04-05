@@ -21,8 +21,10 @@ class Analyzer:
              "У меня были идеи по решению<br>задачи, но я не смог(ла)<br>их довести до ума",
              "Я решил(а) задачу,<br>но думаю у меня есть ошибки",
              "Я решил(а) эту задачу<br>и уверен, что решил(а)<br>правильно на 80% и больше."]
+    OLTOSTAGE = {"respa/": "заключительный этап",
+                "oblast/": "областной этап"}
     xAxisParams = dict(range=[0, 100], dtick=10)
-    layoutParams = dict(showlegend=False)
+    layoutParams = dict(showlegend=False, height=320, margin=dict(b=0, t=80))
 
     def __init__(self, bygrade_scores, bygrade_responses, OLYMP):
         self.ROUND3 = tools.rounder(3)
@@ -65,6 +67,7 @@ class Analyzer:
     
     def box_plots_total(self):
         graph = Graph()
+        graph.TICK_SIZE = 12
         bins_bygrade = []
         for grade in (9, 10, 11):
             data = self.gradeToStudent[grade]
@@ -75,11 +78,12 @@ class Analyzer:
         bins = [list(itertools.chain(*sublist)) for sublist in zip(*bins_bygrade)]
 
         traces = [go.Box(x=bins[i], name=name) for i, name in enumerate(self.xVals) ] 
-        graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}allgrade-box", f"Соответствие рефлексии конечному результату (9-11 кл.)", 
+        graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}allgrade-box", f"Соответствие рефлексии конечному результату<br>(9-11 кл., {self.OLTOSTAGE[self.OLYMP]})", 
                         xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def box_plots_by_grade(self, grade):
         graph = Graph()
+        graph.TICK_SIZE = 12
         data = self.gradeToStudent[grade]
         NUMPROBS = data[0].numprobs
         bins_chain = [self.create_bins(data, f"problem{i+1}") for i in range(NUMPROBS)]
@@ -87,17 +91,18 @@ class Analyzer:
 
         
         traces = [go.Box(x=bins[i], name=name) for i, name in enumerate(self.xVals) ] 
-        graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-box", f"Соответствие рефлексии конечному результату ({grade} кл.)", 
+        graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-box", f"Соответствие рефлексии конечному результату<br>({grade} кл., {self.OLTOSTAGE[self.OLYMP]})", 
                         xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def box_plots_by_problem(self, grade):
         graph = Graph()
+        graph.TICK_SIZE = 12
         data = self.gradeToStudent[grade]
         NUMPROBS = data[0].numprobs
         for i in range(NUMPROBS):
             bins = self.create_bins(data, f"problem{i+1}")
             traces = [go.Box(x=bins[i], name=name) for i, name in enumerate(self.xVals) ] 
-            graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-problem{i+1}-box", f"Соответствие рефлексии конечному результату<br>(Задача №{i+1}; {grade} кл.)", 
+            graph.plot_data(reversed(traces), f"selfassessment/{self.OLYMP}grade{grade}-problem{i+1}-box", f"Соответствие рефлексии конечному результату<br>(Задача №{i+1}; {grade} кл., {self.OLTOSTAGE[self.OLYMP]})", 
                         xaxisparams=self.xAxisParams, layoutparams=self.layoutParams)
 
     def calculate_correlation(self, grade):
