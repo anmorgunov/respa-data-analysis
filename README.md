@@ -10,4 +10,13 @@
 
 ## Highlights
 
-![](export/pdf/results/2023/respa/grade11.pdf)
+![Распределение баллов в 11 классе на заключительном этапе 2022-2023 (гистограмма)](export/jpg/results/2023/respa/grade11-dist-problemwise.jpg)
+![Распределение баллов в 11 классе на заключительном этапе 2022-2023 (ящик с усами)](export/jpg/results/2023/respa/grade11-dist-box.jpg)
+![Корреляция между задачами в 11 классе на заключительном этапе 2022-2023](export/jpg/results/2023/respa/grade11.jpg)
+![Корреляция между задачами в 11 классе на заключительном этапе 2022-2023](export/jpg/results/2023/respa/grade11-avg.jpg)
+
+![Корреляция между результатами областного и заключительного этапа для 10 класса (2022-2023)](export/jpg/trajectory/gr10-data.jpg)
+
+![Оценка сложности заданий в 11 кл (2022-2023)](export/jpg/demographics/difficulty-grade11.jpg)
+![Оценка объемности заданий в 11 кл (2022-2023)](export/jpg/demographics/volume-grade11.jpg)
+![Насколько задания в 11 кл были интересными (2022-2023)](export/jpg/demographics/interest-grade11.jpg)
