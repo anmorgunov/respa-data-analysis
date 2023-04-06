@@ -26,22 +26,21 @@ def parse_results(year):
             re.total = 0
             re.only_total = False
             re.olymp_name = "respa"
-            if re.name is not None:
-                col = 'C'
-                while True:
-                    if '№' in ws[col+'2'].value:
-                        num = int(ws[col+'2'].value.split('№')[1])
-                        maxscore = int(ws[col+'1'].value)
-                        res = float(ws[col+str(row)].value)
-                        setattr(re, f"problem{num}", {'abs': res, 'max': maxscore, 'rel': res/maxscore})
-                        re.total += res
-                        # print(getattr(re, f"problem{num}"))
-                        re.numprobs = num
-                    else:
-                        break
-                    col = tools.getNextCol(col)
-            else:
+            if re.name is None:
                 break
+            col = 'C'
+            while True:
+                if '№' in ws[col+'2'].value:
+                    num = int(ws[col+'2'].value.split('№')[1])
+                    maxscore = int(ws[col+'1'].value)
+                    res = float(ws[col+str(row)].value)
+                    setattr(re, f"problem{num}", {'abs': res, 'max': maxscore, 'rel': res/maxscore})
+                    re.total += res
+                    # print(getattr(re, f"problem{num}"))
+                    re.numprobs = num
+                else:
+                    break
+                col = tools.getNextCol(col)
             bygrade.setdefault(grade, []).append(re)
             row += 1
     return bygrade

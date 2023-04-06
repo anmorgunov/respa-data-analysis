@@ -74,32 +74,33 @@ def parse_results():
                 re.only_total = False
                 re.oblast = oblast
                 re.olymp_name = "oblast"
+                re.arbitrage = 0
                 skip = False
-                if re.name is not None:
-                    col = 'E'
-                    while True:
-                        if (cell:=ws[col+'2'].value) is not None and 'адача' in cell:
-                            num = int(ws[col+'2'].value.split()[0])
-                            maxscore = MAX_SCORE[grade][num]
-                            if ws[col+str(row)].value is None and col == 'E':
-                                skip = True
-                                break #skip participant
-                            res = float(ws[col+str(row)].value)
-                            # print(res, oblast, grade, col, row)
-                            if res > maxscore or (num+1 in MAX_SCORE[grade] and # the next column should have another problem grade
-                                                  ws[tools.getNextCol(col)+str(row)].value is None): #but instead it's empty
-                                re.total = res
-                                re.only_total = True
-                                break
-                            setattr(re, f"problem{num}", {'abs': res, 'max': maxscore, 'rel': res/maxscore})
-                            re.total += res
-                            # print(getattr(re, f"problem{num}"))
-                            re.numprobs = num
-                        else:
-                            break
-                        col = tools.getNextCol(col)
-                else:
+                if re.name is None:
                     break
+                col = 'E'
+                while True:
+                    if (cell:=ws[col+'2'].value) is not None and 'адача' in cell:
+                        num = int(ws[col+'2'].value.split()[0])
+                        maxscore = MAX_SCORE[grade][num]
+                        if ws[col+str(row)].value is None and col == 'E':
+                            skip = True
+                            break #skip participant
+                        res = float(ws[col+str(row)].value)
+                        if res > maxscore or (num+1 in MAX_SCORE[grade] and # the next column should have another problem grade
+                                                ws[tools.getNextCol(col)+str(row)].value is None): #but instead it's empty
+                            re.total = res
+                            re.only_total = True
+                            break
+                        setattr(re, f"problem{num}", {'abs': res, 'max': maxscore, 'rel': res/maxscore})
+                        re.total += res
+                        re.numprobs = num
+                    else:
+                        break
+                    col = tools.getNextCol(col)
+                if not re.only_total:
+                    arb_score = ws[col+str(row)].value
+                    re.arbitrage = float(arb_score) if arb_score is not None else 0
                 if not skip:
                     bygrade.setdefault(grade, []).append(re)
                     byoblast.setdefault(oblast, {}).setdefault(grade, []).append(re)

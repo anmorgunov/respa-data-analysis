@@ -17,7 +17,7 @@ class Analyzer:
         self.gradeToStudent = {}
         self.oblToGrToStuds = {}
 
-    def combine_students(self, grade, oblast=None):
+    def combine_students(self, grade, oblast=None, include_arbitrage=False):
         """Combine students by grade and optionally by oblast.
 
         Parameters:
@@ -36,12 +36,16 @@ class Analyzer:
             name_to_objs = find_similar_matches([self.respa_bygrade[grade], self.oblast_bygrade[grade]], "name", testing=False)
         else:
             name_to_objs = find_similar_matches([self.respa_bygrade[grade], self.oblast_byoblast[oblast][grade]], "name", testing=False)
-
+            if oblast == 'nis':
+                print(name_to_objs)
         for name, objs in name_to_objs.items():
             student = Student()
             student.name = name
             for obj in objs:
-                setattr(student, f"{obj.olymp_name}_score", obj.total)
+                total = obj.total
+                if include_arbitrage and obj.olymp_name == "oblast":
+                    total += obj.arbitrage
+                setattr(student, f"{obj.olymp_name}_score", total)
             grToStudents.setdefault(grade, []).append(student)
             self.gradeToStudent.setdefault(grade, []).append(student)
         return grToStudents
@@ -78,12 +82,11 @@ class Analyzer:
         oblast, respa = self.get_oblast_respa_arrays(data)
         return np.corrcoef(oblast, respa)
 
-    def plot_correlations_by_grade(self):
+    def plot_correlations_by_grade(self, grades):
         graph = Graph()
-        grades = sorted(self.gradeToStudent)
         corrs = []
         for grade in grades:
-            self.combine_students(grade)
+            self.combine_students(grade, include_arbitrage=True)
             data = self.gradeToStudent[grade]
             oblast, respa = self.get_oblast_respa_arrays(data)
             corr = np.corrcoef(oblast, respa)[0, 1]
@@ -108,16 +111,15 @@ class Analyzer:
                         layoutparams=dict(barmode="stack", width=1080, height=250,
                                           margin=dict(b=0, t=75)))
 
-    def plot_correlations_by_oblast(self):
+    def plot_correlations_by_oblast(self, grades):
         graph = Graph()
-        grades = [9, 10, 11]
         oblasts = sorted(self.oblast_byoblast)
         xVals = []
         corrs = []
         for oblast in oblasts:
             obl_scores, resp_scores = [], []
             for grade in grades:
-                grToStuds = self.combine_students(grade, oblast)
+                grToStuds = self.combine_students(grade, oblast, include_arbitrage=True)
                 if grade not in grToStuds:
                     print(f"{oblast} doesn't  have results for {grade}")
                     continue
@@ -163,13 +165,13 @@ class Analyzer:
 
 if __name__ == "__main__":
     a = Analyzer()
-    for grade in (11, 10, 9):
-        a.combine_students(grade)
-        a.calculate_correlation(grade)
+    # for grade in (11, 10, 9):
+    #     a.combine_students(grade)
+    #     a.calculate_correlation(grade)
     
     # A few notes: it matches 41/45 students in grade 11
     #                         46/53             grade 10
     #                         44/47             grade 9
-    
-    a.plot_correlations_by_grade()
-    a.plot_correlations_by_oblast()
+    grades = [9, 10, 11]
+    a.plot_correlations_by_grade(grades)
+    a.plot_correlations_by_oblast(grades)

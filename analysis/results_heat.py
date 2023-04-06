@@ -21,8 +21,11 @@ class Analyzer:
     def results_for_problem(self, data, probnum, scale=100):
         return [getattr(obj, f"problem{probnum}")["rel"]*scale for obj in data if not obj.only_total]
 
-    def total_results(self, data, scale=100/70):
-        return [obj.total*scale for obj in data]
+    def total_results(self, data, scale=100/70, include_arbitrage=True):
+        if self.OLYMP == "oblast/" and include_arbitrage:
+            return [(obj.total+obj.arbitrage)*scale for obj in data]
+        else:
+            return [obj.total*scale for obj in data]
     
     def heat_map_for_grade(self, grade, do_fit=True):
         graph = Graph()
