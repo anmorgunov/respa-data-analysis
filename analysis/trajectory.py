@@ -36,13 +36,13 @@ class Analyzer:
             name_to_objs = find_similar_matches([self.respa_bygrade[grade], self.oblast_bygrade[grade]], "name", testing=False)
         else:
             name_to_objs = find_similar_matches([self.respa_bygrade[grade], self.oblast_byoblast[oblast][grade]], "name", testing=False)
-            if oblast == 'nis':
-                print(name_to_objs)
         for name, objs in name_to_objs.items():
             student = Student()
             student.name = name
             for obj in objs:
                 total = obj.total
+                if hasattr(obj, "oblast"):
+                    student.oblast = obj.oblast
                 if include_arbitrage and obj.olymp_name == "oblast":
                     total += obj.arbitrage
                 setattr(student, f"{obj.olymp_name}_score", total)
@@ -84,18 +84,20 @@ class Analyzer:
 
     def plot_correlations_by_grade(self, grades):
         graph = Graph()
+        graph.SAVE_HTML = True
         corrs = []
         for grade in grades:
             self.combine_students(grade, include_arbitrage=True)
             data = self.gradeToStudent[grade]
             oblast, respa = self.get_oblast_respa_arrays(data)
+            labels = [f"{obj.name}<br>{obj.oblast}" for obj in data]
             corr = np.corrcoef(oblast, respa)[0, 1]
             corrs.append(corr)
             fit = np.polyfit(oblast, respa, 1)
             xgrid = np.mgrid[0:100:2j]
             eq = f"y={self.ROUND3(fit[0])}x+{self.ROUND3(fit[1])}<br>R^2 = {self.ROUND3(corr**2)}"
             yfit = np.vectorize(lambda x: fit[0]*x+fit[1])(xgrid)
-            traces = [go.Scatter(x=oblast, y=respa, mode='markers', name="Результаты"),
+            traces = [go.Scatter(x=oblast, y=respa, mode='markers', name="Результаты", text=labels),
                         go.Scatter(x=xgrid, y=yfit, mode='lines', name="Best fit")]
             graph.plot_data(traces, f"trajectory/gr{grade}-data", f"Корреляция между баллами областного и<br>заключительного этапа РО ({grade} кл., {self.YEAR-1}-{self.YEAR} уч. год)", xtitle="Баллы (из 100%) на теор. туре областного этапа", ytitle="Баллы (из 100%) на теор. туре<br>заключительного этапа",
             eq=dict(xref="paper", yref="paper", x=0, y=1, text=eq, showarrow=False),
@@ -174,4 +176,4 @@ if __name__ == "__main__":
     #                         44/47             grade 9
     grades = [9, 10, 11]
     a.plot_correlations_by_grade(grades)
-    a.plot_correlations_by_oblast(grades)
+    # a.plot_correlations_by_oblast(grades)

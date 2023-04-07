@@ -4,6 +4,8 @@ import plotly.io as pio
 pio.kaleido.scope.mathjax = None
 
 class Graph:
+    SAVE_HTML = False
+
     def __init__(self):
         self.BLACK = 'rgb(51, 51, 51)'
         self.GREY = 'rgb(236, 236, 236)'
@@ -84,8 +86,8 @@ class Graph:
                     color=self.BLACK,
                 ),)
 
-    def _save_fig(self, figure, fname, html=False, jpg=True, svg=True, pdf=True):
-        if html: figure.write_html(f"export/html/{fname}.html", include_plotlyjs='cdn')
+    def _save_fig(self, figure, fname, jpg=True, svg=True, pdf=True):
+        if self.SAVE_HTML: figure.write_html(f"export/html/{fname}.html", include_plotlyjs='cdn')
         if jpg: figure.write_image(f"export/jpg/{fname}.jpg", scale=4.0)
         if svg: figure.write_image(f"export/svg/{fname}.svg")
         if pdf: figure.write_image(f"export/pdf/{fname}.pdf")
